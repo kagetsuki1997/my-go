@@ -1,0 +1,23 @@
+name: Common
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+      - hotfix/*
+      - feature/*
+      - ci/*
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: common-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-common:
+    name: Common lint
+    uses: chelpis/actions-lib/.github/workflows/common-lint.yaml@main
+    secrets: inherit

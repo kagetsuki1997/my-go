@@ -1,0 +1,69 @@
+linters-settings:
+  revive:
+    ignore-generated-header: true
+    severity: warning
+    rules:
+      - name: file-header
+        disabled: true
+      - name: max-public-structs
+        disabled: true
+      - name: banned-characters
+        disabled: true
+      - name: package-comments
+        disabled: true
+      - name: nested-structs
+        disabled: true
+      - name: exported
+        disabled: true
+      - name: add-constant
+        arguments:
+          [
+            {
+              "maxLitCount": "10",
+              "allowStrs": '""',
+              "allowInts": "-1,0,1",
+              "ignoreFuncs": "os\\.*,make",
+            },
+          ]
+      - name: line-length-limit
+        arguments: [120]
+      - name: function-length
+        arguments: [50, 75]
+      - name: argument-limit
+        arguments: [5]
+      - name: cyclomatic
+        arguments: [10]
+      - name: cognitive-complexity
+        arguments: [15]
+      - name: function-result-limit
+        arguments: [3]
+  linters:
+    enable-all: true
+    disable:
+      - cyclop # The linter can detect complicated code, but it never lead to actual code changes
+      - deadcode # deprecated
+      - depguard
+      - exhaustivestruct # deprecated; replaced by exhaustruct
+      - gocognit #  The linter can detect complicated code, but it never lead to actual code changes
+      - golint # deprecated; replaced by revive
+      - gosmopolitan
+      - ifshort # deprecated
+      - interfacer # deprecated
+      - ireturn # ireturn works poorly for the style with private types and public interfaces
+      - maintidx # The linter can detect complicated code, but it never lead to actual code changes
+      - maligned # deprecated
+      - nlreturn
+      - nonamedreturns
+      - nosnakecase # revive's var-naming check seems to be better
+      - scopelint # deprecated; replaced by exportloopref
+      - structcheck # deprecated
+      - varcheck # deprecated
+      - varnamelen
+      - wsl
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - revive
+        - errcheck
+        - unused

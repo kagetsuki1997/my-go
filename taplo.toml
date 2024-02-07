@@ -1,0 +1,16 @@
+include = ["**/*.toml"]
+exclude = [".direnv/**/*.toml"]
+
+[formatting]
+align_entries         = true
+align_comments        = true
+align_single_comments = true
+array_trailing_comma  = true
+array_auto_expand     = true
+inline_table_expand   = true
+array_auto_collapse   = true
+column_width          = 100
+indent_string         = "  "
+trailing_newline      = true
+allowed_blank_lines   = 1
+crlf                  = false

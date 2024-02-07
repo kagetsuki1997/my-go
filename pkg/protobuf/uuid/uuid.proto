@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package uuid;
+
+option go_package = "my-go/pkg/protobuf/uuid";
+
+message Uuid {
+  fixed64 high_bits = 1;
+  fixed64 low_bits = 2;
+}

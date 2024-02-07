@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o errtrace
+set -o nounset
+set -o pipefail
+# Uncomment for debugging purpose
+# set -o xtrace
+
+WORKSPACE_DIR=$(realpath "$(dirname "$0")"/../..)
+
+# shellcheck source=/dev-support/lib/logging
+. "$WORKSPACE_DIR"/dev-support/lib/logging
+
+info "Formatting Nix with \`nixpkgs-fmt\`"
+nixpkgs-fmt "$WORKSPACE_DIR"
+
+info "Formatting shell script with \`shfmt\`"
+shfmt --write --list --indent 2 "$WORKSPACE_DIR"
+
+info "Formatting CSS, GraphQL, HTML, JavaScript, Markdown and YAML with \`prettier\`"
+prettier --ignore-path "$WORKSPACE_DIR"/.gitignore --ignore-path "$WORKSPACE_DIR"/.prettierignore --write --list-different "$WORKSPACE_DIR"
+
+info "Formatting TOML with \`taplo\`"
+taplo format
+
+info "Formatting HCL with \`hclfmt\`"
+info "Formatting C, C++ and Proto with \`clang-format\`"
+info "Formatting SQL with \`sql-formatter\`"
+info "Formatting Go with \`goimports\`"
+treefmt --allow-missing-formatter -C "$WORKSPACE_DIR" --formatters hclfmt --formatters clang-format --formatters sql-formatter --formatters goimports

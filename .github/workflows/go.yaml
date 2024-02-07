@@ -1,0 +1,118 @@
+name: Go
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+      - hotfix/*
+      - feature/*
+      - ci/*
+  pull_request:
+    paths:
+      - .github/**
+      - cmd/**
+      - pkg/**
+      - go.*
+  workflow_dispatch:
+
+env:
+  CI: 1
+
+jobs:
+  go-mod-tidy:
+    name: go-mod-tidy
+    runs-on:
+      - linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          check-latest: true
+      - name: go-mod-tidy
+        run: go mod tidy -v
+
+  go-imports:
+    name: go-imports
+    runs-on:
+      - linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Nix
+        uses: chelpis/actions-lib/actions/setup-nix@main
+      - name: Checking Go format with `goimports`
+        run: |
+          nix profile install nixpkgs#treefmt nixpkgs#gotools
+          treefmt --allow-missing-formatter --formatters goimports-check
+
+  golang-ci:
+    name: golangci
+    runs-on:
+      - linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          check-latest: true
+
+      - name: golangci-lint
+        # Note: this is the 'v3' tag as of 2023-08-14
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.55.2
+
+          skip-cache: true
+          # Show only new issues if it's a pull request.
+          only-new-issues: true
+          args: --timeout=5m --config=.golangci.yaml
+
+  test:
+    name: test
+    runs-on:
+      - linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          check-latest: true
+      - name: Go test
+        run: go test ./...
+
+  build:
+    name: build
+    needs: test
+    strategy:
+      matrix:
+        release:
+          - true
+        os:
+          - linux
+        arch:
+          - amd64
+    runs-on:
+      - ${{ matrix.os }}-${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          check-latest: true
+      - name: Go build
+        env:
+          RELEASE: ${{ matrix.release }}
+          COMMIT: ${{ github.ref }}
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+          GOBIN: ${{ runner.temp }}/bin
+        run: |
+          go install -ldflags "-X main.version=$COMMIT" ./...
+          echo "GOBIN=$GOBIN" >> "$GITHUB_ENV"

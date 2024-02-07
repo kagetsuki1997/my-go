@@ -1,0 +1,16 @@
+[database]
+host             = "localhost"
+port             = 5432
+db_name          = "my_postgres"
+user             = "admin"
+password         = "admin"
+sslmode          = "prefer"
+role             = "admin"
+application_name = "doge"
+migration_url    = "file://cmd/doge/migration"
+
+[http_server]
+addr_port = "127.0.0.1:8080"
+
+[grpc_server]
+addr_port = "127.0.0.1:50051"

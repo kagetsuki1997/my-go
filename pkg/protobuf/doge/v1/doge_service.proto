@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package doge.v1;
+
+option go_package = "my-go/pkg/protobuf/doge/v1";
+
+import "pkg/protobuf/uuid/uuid.proto";
+import "pkg/protobuf/doge/doge.proto";
+
+service DogeService {
+  rpc GetDoge(uuid.Uuid) returns (Doge);
+  rpc CreateDoge(CreateDogeRequest) returns (Doge);
+}
+
+message CreateDogeRequest {
+  string name = 1;
+  int64 magic_number = 2;
+  DogeType type = 3;
+}

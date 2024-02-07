@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package doge;
+
+option go_package = "my-go/pkg/protobuf/doge";
+
+import "google/protobuf/timestamp.proto";
+import "pkg/protobuf/uuid/uuid.proto";
+
+message Doge {
+  uuid.Uuid id = 1;
+  string name = 2;
+  int64 magic_number = 3;
+  DogeType type = 4;
+  google.protobuf.Timestamp create_timestamp = 5;
+}
+
+enum DogeType {
+  DOGE_TYPE_UNSPECIFIED = 0;
+  DOGE_TYPE_DOGE = 1;
+  DOGE_TYPE_DOGE_CRY = 2;
+  DOGE_TYPE_DOGE_BUFFED = 3;
+  DOGE_TYPE_DOGE_KACHITORITAI = 4;
+}
